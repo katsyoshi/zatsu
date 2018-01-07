@@ -18,6 +18,16 @@ fn plus_one(x: Option<i32>) -> Option<i32> {
     }
 }
 
+fn underbar_placeholder(some_u8_value: u8) {
+    match some_u8_value {
+        1 => println!("one"),
+        3 => println!("trhee"),
+        5 => println!("five"),
+        7 => println!("seven"),
+        _ => (),
+    }
+}
+
 fn value_in_cents(coin: Coin) -> u32 {
     match coin {
         Coin::Penny => {
@@ -38,4 +48,9 @@ fn main() {
     let five = Some(5);
     let six = plus_one(five);
     let none = plus_one(None);
+
+    for x in 0..20 {
+        underbar_placeholder(x);
+    }
+
 }
