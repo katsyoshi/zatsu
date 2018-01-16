@@ -1,4 +1,6 @@
 fn main() {
-    let c = "パタトクカシーー".chars().collect::<Vec<char>>();
-    println!("{}{}{}{}", c[0], c[2], c[4], c[6]);
+    let chars = "パタトクカシーー".chars().collect::<Vec<char>>();
+    let mut s = String::new();
+    for (_i, c) in chars.iter().enumerate().filter(|&(i, _c)| i % 2 == 0 ) { s.push(*c); }
+    println!("{}", s);
 }
