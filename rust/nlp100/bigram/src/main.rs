@@ -1,19 +1,9 @@
 fn chars(phrase: String) -> Vec<String> {
-    let words = phrase.chars().collect::<Vec<char>>();
-    let mut result = Vec::new();
-    for w in words {
-        result.push(w.to_string());
-    }
-    result
+    phrase.chars().collect::<Vec<char>>().iter().map(|m| m.to_string()).collect::<Vec<String>>()
 }
 
 fn words(phrase: String) -> Vec<String> {
-    let words = phrase.split(' ').collect::<Vec<&str>>();
-    let mut result = Vec::new();
-    for w in words {
-        result.push(w.to_string());
-    }
-    result
+    phrase.split(' ').collect::<Vec<&str>>().iter().map(|m| m.to_string()).collect::<Vec<String>>()
 }
 
 fn bigram(words: Vec<String>) -> Vec<Vec<String>>{
