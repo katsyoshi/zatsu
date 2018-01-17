@@ -6,7 +6,7 @@ fn words(src: &str) -> Vec<String> {
 
     for s in src.split(' ').collect::<Vec<&str>>() {
         let mut chars = s.chars().collect::<Vec<char>>();
-        if chars.len() < 3 {
+        if chars.len() < 5 {
             result.push(s.to_string());
         } else {
             let last_index = chars.len() - 1;
