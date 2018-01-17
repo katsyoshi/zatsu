@@ -5,7 +5,7 @@ fn words(src: &str) -> Vec<String> {
     let mut result: Vec<String> = Vec::new();
 
     for s in src.split(' ').collect::<Vec<&str>>() {
-        let mut chars = s.to_string().chars().collect::<Vec<char>>();
+        let mut chars = s.chars().collect::<Vec<char>>();
         if chars.len() < 3 {
             result.push(s.to_string());
         } else {
@@ -16,11 +16,8 @@ fn words(src: &str) -> Vec<String> {
             let rand_chars = &mut chars[1..last_index];
             shuffle(rand_chars);
             let mut rand_string = String::new();
-            for c in rand_chars {
-                rand_string = rand_string + &format!("{}", c).to_string();
-            }
-            let rand = format!("{}{}{}", first_char, rand_string, last_char);
-            result.push(rand);
+            for c in rand_chars { rand_string.push(*c) }
+            result.push(format!("{}{}{}", first_char, rand_string, last_char));
         }
     }
     result
@@ -32,6 +29,7 @@ fn shuffle(chars: &mut [char]) {
 
 fn main() {
     let paragraph = "I couldn't believe that I could actually understand what I was reading : the phenomenal power of the human mind .";
+
     for w in words(paragraph) {
         println!("{}", w);
     }
