@@ -1,11 +1,11 @@
 pub struct NLP100 {
-    origin: String,
-    words: Vec<String>,
-    chars: Vec<String>,
+    pub origin: String,
+    pub words: Vec<String>,
+    pub chars: Vec<String>,
 }
 
 impl NLP100 {
-    fn new(script: &str) -> NLP100 {
+    pub fn new(script: &str) -> NLP100 {
         let chars = script.chars().map(|m| m.to_string()).collect::<Vec<String>>();
         let words = script.split(' ').map(|m| m.to_string()).collect::<Vec<String>>();
         NLP100 {
