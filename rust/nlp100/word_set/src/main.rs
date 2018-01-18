@@ -1,22 +1,6 @@
 use std::collections::HashSet;
-
-fn chars(phrase: String) -> Vec<String> {
-    let words = phrase.chars().collect::<Vec<char>>();
-    let mut result = Vec::new();
-    for w in words {
-        result.push(w.to_string());
-    }
-    result
-}
-
-fn words(phrase: String) -> Vec<String> {
-    let words = phrase.split(' ').collect::<Vec<&str>>();
-    let mut result = Vec::new();
-    for w in words {
-        result.push(w.to_string());
-    }
-    result
-}
+extern crate nlp100;
+use nlp100::NLP100;
 
 fn bigram(words: Vec<String>) -> Vec<Vec<String>>{
     let mut result: Vec<Vec<String>> = Vec::new();
@@ -41,13 +25,11 @@ fn bigram(words: Vec<String>) -> Vec<Vec<String>>{
 
 fn main() {
     let mut s1: HashSet<Vec<String>> = HashSet::new();
-    for bi in bigram(chars("parapraparadise".to_string())) {
-        s1.insert(bi);
-    }
+    let paradise = NLP100::new("parapraparadise");
+    for bi in bigram(paradise.chars) { s1.insert(bi); }
     let mut s2: HashSet<Vec<String>> = HashSet::new();
-    for bi in bigram(chars("paragraph".to_string())) {
-        s2.insert(bi);
-    }
+    let paragraph = NLP100::new("paragraph");
+    for bi in bigram(paragraph.chars) { s2.insert(bi); }
 
     println!("===UNION===");
     for x in s1.union(&s2) {
