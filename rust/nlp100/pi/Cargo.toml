@@ -4,3 +4,5 @@ version = "0.1.0"
 authors = ["MATSUMOTO, Katsuyoshi <github@katsyoshi.org>"]
 
 [dependencies]
+nlp100 = { path = "../nlp100" }
+regex = "0.2"
