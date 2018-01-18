@@ -8,13 +8,10 @@ fn main() {
         let c = chars[0].to_string();
         let he = chars[0..2].iter().cloned().collect::<String>();
         let r = match i {
-            0 => c,
-            4...8 => c,
-            14...15 => c,
-            18 => c,
+            0 | 4...8 | 14...15 | 18 => c,
             _ => he,
         };
-        atomic_table.insert(r, i);
+        atomic_table.insert(r, i + 1);
     }
 
     for (k, v) in &atomic_table {
