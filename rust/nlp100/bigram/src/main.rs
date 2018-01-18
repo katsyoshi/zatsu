@@ -1,10 +1,5 @@
-fn chars(phrase: String) -> Vec<String> {
-    phrase.chars().collect::<Vec<char>>().iter().map(|m| m.to_string()).collect::<Vec<String>>()
-}
-
-fn words(phrase: String) -> Vec<String> {
-    phrase.split(' ').collect::<Vec<&str>>().iter().map(|m| m.to_string()).collect::<Vec<String>>()
-}
+extern crate nlp100;
+use nlp100::NLP100;
 
 fn bigram(words: Vec<String>) -> Vec<Vec<String>>{
     let mut result: Vec<Vec<String>> = Vec::new();
@@ -28,14 +23,14 @@ fn bigram(words: Vec<String>) -> Vec<Vec<String>>{
 }
 
 fn main() {
-    let phrase = "I am an NLPer";
+    let phrase = NLP100::new("I am an NLPer");
     println!("\n===word bi-gram");
-    for word in bigram(words(phrase.to_string())) {
+    for word in bigram(phrase.words) {
         println!("{:?}", word);
     }
 
     println!("\n===charactor bi-gram");
-    for word in bigram(chars(phrase.to_string())) {
+    for word in bigram(phrase.chars) {
         println!("{:?}", word);
     }
 }
