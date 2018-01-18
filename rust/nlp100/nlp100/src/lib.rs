@@ -1,3 +1,6 @@
+extern crate regex;
+use regex::Regex;
+
 pub struct NLP100 {
     pub origin: String,
     pub words: Vec<String>,
@@ -7,11 +10,13 @@ pub struct NLP100 {
 impl NLP100 {
     pub fn new(script: &str) -> NLP100 {
         let chars = script.chars().map(|m| m.to_string()).collect::<Vec<String>>();
-        let words = script.split(' ').map(|m| m.to_string()).collect::<Vec<String>>();
+        let words = Regex::new(r"\W+").unwrap().split(script).map(|m| m.to_string()).collect::<Vec<String>>();
+        let origin: String = script.to_string();
+
         NLP100 {
             words,
             chars,
-            origin: script.to_string(),
+            origin,
         }
     }
 }
