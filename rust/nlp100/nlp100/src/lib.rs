@@ -19,11 +19,32 @@ impl NLP100 {
 #[cfg(test)]
 mod tests {
     use NLP100;
+
     #[test]
-    fn it_works() {
-        let nlp100 = NLP100::new("hello");
+    fn origin() {
+        let nlp100 = setup();
         assert_eq!(nlp100.origin, "hello");
-        assert_eq!(nlp100.words, ["hello"].to_vec());
+    }
+
+    #[test]
+    fn chars() {
+        let nlp100 = setup();
         assert_eq!(nlp100.chars, ["h", "e", "l", "l", "o"].to_vec());
+    }
+
+    #[test]
+    fn words() {
+        let nlp100 = setup();
+        assert_eq!(nlp100.words, ["hello"].to_vec());
+    }
+
+    #[test]
+    fn count_words(){
+        let nlp100 = NLP100::new("h, l, l,o");
+        assert_eq!(nlp100.words.len(), 4 as usize);
+    }
+
+    fn setup() -> NLP100 {
+        NLP100::new("hello")
     }
 }
