@@ -32,6 +32,10 @@ impl NLP100 {
         }
         val
     }
+
+    pub fn char_count_list(self) -> Vec<usize> {
+        self.words.iter().map(|v| v.len()).collect()
+    }
 }
 
 #[cfg(test)]
@@ -72,6 +76,12 @@ mod tests {
     fn trigram() {
         let nlp100 = NLP100::new("hello");
         assert_eq!(nlp100.ngram(3, false), vec!["hel", "ell", "llo"]);
+    }
+
+    #[test]
+    fn word_cound() {
+        let nlp100 = NLP100::new("hello, world!");
+        assert_eq!(nlp100.char_count_list(), vec![5, 5]);
     }
 
     fn setup() -> NLP100 {
