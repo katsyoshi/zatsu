@@ -1,16 +1,9 @@
-fn concat(t: (Vec<char>, Vec<char>)) {
-    let (f, s) = t;
-    let mut r = String::new();
-
-    for (x, y) in f.iter().zip(s.iter()) {
-        r.push_str(&format!("{}{}", x, y));
-    }
-    println!("{}", r);
+fn concat(f: Vec<char>, s: Vec<char>) -> String {
+    f.iter().zip(s).map(|(x, y)| format!("{}{}", x, y)).collect::<String>()
 }
 
 fn main() {
-    let p: Vec<char> = String::from("パトカー").chars().collect();
-    let t: Vec<char> = String::from("タクシー").chars().collect();
-    let f = (p, t);
-    concat(f);
+    let p: Vec<char> = "パトカー".chars().collect();
+    let t: Vec<char> = "タクシー".chars().collect();
+    println!("{}", concat(p, t));
 }
