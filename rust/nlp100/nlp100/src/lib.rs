@@ -51,13 +51,13 @@ mod tests {
     #[test]
     fn chars() {
         let nlp100 = setup();
-        assert_eq!(nlp100.chars, ["h", "e", "l", "l", "o"].to_vec());
+        assert_eq!(nlp100.chars, vec!["h", "e", "l", "l", "o"]);
     }
 
     #[test]
     fn words() {
         let nlp100 = setup();
-        assert_eq!(nlp100.words, ["hello"].to_vec());
+        assert_eq!(nlp100.words, vec!["hello"]);
     }
 
     #[test]
