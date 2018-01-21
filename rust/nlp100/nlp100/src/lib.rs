@@ -33,10 +33,19 @@ impl NLP100 {
         val
     }
 
-    pub fn char_count_list(self) -> Vec<usize> {
-        self.words.iter().map(|v| v.len()).collect()
+    pub fn char_count_list(self) -> Vec<u32> {
+        self.words.iter().map(|v| v.len() as u32).collect()
+    }
+
+    pub fn chars_first_to(word: String, stop: usize) -> String{
+        (word.chars().map(|c| c.to_string()).collect::<Vec<String>>()[0..stop]).join("")
+    }
+
+    pub fn words_first_to(self, stop: usize) -> Vec<String> {
+        self.words.iter().map(|word| NLP100::chars_first_to(word.to_string(), stop)).collect::<Vec<String>>()
     }
 }
+
 
 #[cfg(test)]
 mod tests {
@@ -62,8 +71,9 @@ mod tests {
 
     #[test]
     fn count_words(){
-        let nlp100 = NLP100::new("h, l, l,o");
-        assert_eq!(nlp100.words.len(), 4 as usize);
+        let nlp100 = NLP100::new("h, l, l,o").words;
+        assert_eq!(nlp100.len(), 4 as usize);
+        assert_eq!(nlp100, vec!["h", "l", "l", "o"]);
     }
 
     #[test]
@@ -82,6 +92,19 @@ mod tests {
     fn word_cound() {
         let nlp100 = NLP100::new("hello, world!");
         assert_eq!(nlp100.char_count_list(), vec![5, 5]);
+    }
+
+    #[test]
+    fn words_first_to_one() {
+        let nlp100 = NLP100::new("hello, world!!!");
+        assert_eq!(nlp100.words_first_to(1), vec!["h", "w"]);
+
+    }
+
+    #[test]
+    fn words_first_to_two() {
+        let nlp100 = NLP100::new("hello, world!!!");
+        assert_eq!(nlp100.words_first_to(2), vec!["he", "wo"]);
     }
 
     fn setup() -> NLP100 {
