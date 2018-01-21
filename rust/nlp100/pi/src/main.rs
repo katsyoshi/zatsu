@@ -1,5 +1,4 @@
 extern crate nlp100;
-extern crate regex;
 use nlp100::NLP100;
 
 fn sort(words: &mut Vec<&str>) {

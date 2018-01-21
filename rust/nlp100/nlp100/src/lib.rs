@@ -98,7 +98,6 @@ mod tests {
     fn words_first_to_one() {
         let nlp100 = NLP100::new("hello, world!!!");
         assert_eq!(nlp100.words_first_to(1), vec!["h", "w"]);
-
     }
 
     #[test]
