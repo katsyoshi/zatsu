@@ -1,20 +1,23 @@
-use std::collections::HashMap;
+extern crate nlp100;
+use nlp100::NLP100;
+
+fn hi(a: &str, c: usize) -> String {
+    (&(a.chars().map(|v| v.to_string()).collect::<Vec<String>>())[0..c]).join("")
+}
+
+fn atomic_table(words: Vec<String>) -> Vec<String> {
+    (0..).zip(words.iter()).map(|(i, a)| {
+        format!("{}: {}", {
+            match i {
+                0 | 4...8 | 14...15 | 18 => hi(a,1),
+                _ => hi(a, 2),
+            }
+        }, i + 1)
+    }).collect::<Vec<String>>()
+}
 
 fn main() {
-    let atomic_words: Vec<&str> = "Hi He Lied Because Boron Could Not Oxidize Fluorine. New Nations Might Also Sign Peace Security Clause. Arthur King Can.".split(' ').collect();
-    let mut atomic_table = HashMap::new();
-    for (i, a) in atomic_words.iter().enumerate() {
-        let chars = a.chars().collect::<Vec<char>>();
-        let c = chars[0].to_string();
-        let he = chars[0..2].iter().cloned().collect::<String>();
-        let r = match i {
-            0 | 4...8 | 14...15 | 18 => c,
-            _ => he,
-        };
-        atomic_table.insert(r, i + 1);
-    }
+    let atomic = NLP100::new("Hi He Lied Because Boron Could Not Oxidize Fluorine. New Nations Might Also Sign Peace Security Clause. Arthur King Can.");
 
-    for (k, v) in &atomic_table {
-        println!("{}: {}", k, v);
-    }
+    for s in atomic_table(atomic.words) {println!("{}", s);}
 }
