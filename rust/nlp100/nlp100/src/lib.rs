@@ -1,3 +1,7 @@
+use std::fs::File;
+use std::io::BufReader;
+use std::io::prelude::*;
+
 extern crate regex;
 use regex::Regex;
 
@@ -43,6 +47,11 @@ impl NLP100 {
 
     pub fn words_first_to(self, stop: usize) -> Vec<String> {
         self.words.iter().map(|word| NLP100::chars_first_to(word.to_string(), stop)).collect::<Vec<String>>()
+    }
+
+    pub fn read_file(self, path: String) -> Vec<String> {
+        let file = File::open(path).unwrap();
+        BufReader::new(file).lines().map(|m| m.unwrap().to_string()).collect::<Vec<String>>()
     }
 }
 
@@ -104,6 +113,13 @@ mod tests {
     fn words_first_to_two() {
         let nlp100 = NLP100::new("hello, world!!!");
         assert_eq!(nlp100.words_first_to(2), vec!["he", "wo"]);
+    }
+
+    #[test]
+    fn read_file() {
+        let s = setup();
+        let line = s.read_file("hightemp.txt".to_string()).len();
+        assert_eq!(line, 24);
     }
 
     fn setup() -> NLP100 {
