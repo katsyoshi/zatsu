@@ -49,9 +49,16 @@ impl NLP100 {
         self.words.iter().map(|word| NLP100::chars_first_to(word.to_string(), stop)).collect::<Vec<String>>()
     }
 
-    pub fn read_file(self, path: String) -> Vec<String> {
-        let file = File::open(path).unwrap();
-        BufReader::new(file).lines().map(|m| m.unwrap().to_string()).collect::<Vec<String>>()
+    fn open(path: String) -> File {
+        File::open(path).unwrap()
+    }
+
+    pub fn read(path: String) -> Vec<String> {
+        BufReader::new(NLP100::open(path)).lines().map(|m| m.unwrap().to_string()).collect::<Vec<String>>()
+    }
+
+    pub fn count(path: String) -> usize {
+        BufReader::new(NLP100::open(path)).lines().count()
     }
 }
 
@@ -117,8 +124,13 @@ mod tests {
 
     #[test]
     fn read_file() {
-        let s = setup();
-        let line = s.read_file("hightemp.txt".to_string()).len();
+        let line = NLP100::read(String::from("hightemp.txt"));
+        assert_eq!(line[0], "高知県\t江川崎\t41\t2013-08-12");
+    }
+
+    #[test]
+    fn count_line() {
+        let line = NLP100::count(String::from("hightemp.txt"));
         assert_eq!(line, 24);
     }
 
