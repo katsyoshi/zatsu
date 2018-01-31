@@ -1,0 +1,8 @@
+[package]
+name = "capture_mediafile"
+version = "0.1.0"
+authors = ["MATSUMOTO, Katsuyoshi <github@katsyoshi.org>"]
+
+[dependencies]
+serde_json = "1.0"
+regex = "0.2"
