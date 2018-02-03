@@ -15,7 +15,7 @@ fn main() {
     let keywords = &args[1..];
     let file = File::open(path).unwrap();
     let lines = BufReader::new(file).lines();
-    let re = Regex::new(r"\[\[File:(?P<filename>.+?)(?:\|.*)*(?:\|.*)*\]\]").unwrap();
+    let re = Regex::new(r"\[\[(File|ファイル):(?P<filename>.+?)(?:\|.*)*(?:\|.*)*\]\]").unwrap();
 
     for l in lines {
         let v: Value = serde_json::from_str(&l.unwrap()).unwrap();
