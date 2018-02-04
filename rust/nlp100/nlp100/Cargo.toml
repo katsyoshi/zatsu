@@ -4,4 +4,5 @@ version = "0.1.0"
 authors = ["MATSUMOTO, Katsuyoshi <github@katsyoshi.org>"]
 
 [dependencies]
+libflate = "0.1"
 regex = "0.2"
