@@ -2,7 +2,9 @@ use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
 
+extern crate libflate;
 extern crate regex;
+use libflate::gzip::Decoder;
 use regex::Regex;
 
 pub struct NLP100 {
@@ -51,6 +53,13 @@ impl NLP100 {
 
     fn open(path: String) -> File {
         File::open(path).unwrap()
+    }
+
+    pub fn read_gzip(path: String) -> Vec<String> {
+        let mut file = NLP100::open(path);
+        let mut string = String::new();
+        Decoder::new(&mut file).unwrap().read_to_string(&mut string).unwrap();
+        string.split("\n").map(|m| m.to_string()).collect::<Vec<String>>()
     }
 
     pub fn read(path: String) -> Vec<String> {
@@ -132,6 +141,13 @@ mod tests {
     fn count_line() {
         let line = NLP100::count(String::from("hightemp.txt"));
         assert_eq!(line, 24);
+    }
+
+    #[test]
+    fn deflate() {
+        let path = String::from("jawiki-country.json.gz");
+        let json = NLP100::read_gzip(path);
+        assert_eq!(55586, json[0].len());
     }
 
     fn setup() -> NLP100 {
