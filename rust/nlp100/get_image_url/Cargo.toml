@@ -1,0 +1,13 @@
+[package]
+name = "get_image_url"
+version = "0.1.0"
+authors = ["MATSUMOTO, Katsuyoshi <github@katsyoshi.org>"]
+
+[dependencies]
+futures = "*"
+hyper = "*"
+hyper-tls = "*"
+nlp100 = { path = "../nlp100" }
+regex = "*"
+serde_json = "*"
+tokio-core = "*"
