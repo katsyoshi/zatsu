@@ -1,11 +1,11 @@
+extern crate libflate;
+extern crate regex;
+
+use libflate::gzip::Decoder;
+use regex::Regex;
 use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
-
-extern crate libflate;
-extern crate regex;
-use libflate::gzip::Decoder;
-use regex::Regex;
 
 pub struct NLP100 {
     pub origin: String,
