@@ -1,13 +1,21 @@
+extern crate futures;
+extern crate hyper;
+extern crate hyper_tls;
 extern crate libflate;
 extern crate regex;
 extern crate serde_json;
+extern crate tokio_core;
 
+use futures::{Future, Stream};
+use hyper::Client;
+use hyper_tls::HttpsConnector;
 use libflate::gzip::Decoder;
 use regex::Regex;
 use serde_json::Value;
 use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
+use tokio_core::reactor::Core;
 
 pub struct NLP100 {
     pub origin: String,
@@ -70,6 +78,24 @@ impl NLP100 {
 
     pub fn count(path: String) -> usize {
         BufReader::new(NLP100::open(path)).lines().count()
+    }
+
+    pub fn get(url: String) -> String {
+        let mut core = Core::new().unwrap();
+        let url = url.parse().unwrap();
+        let handle = core.handle();
+        let client = Client::configure().connector(HttpsConnector::new(4, &handle).unwrap()).build(&handle);
+        let work = client.get(url).and_then(|res| {
+            res.body().concat2().map(|chunk| {
+                let v = chunk.to_vec();
+                String::from_utf8_lossy(&v).to_string()
+            })
+        });
+
+        match core.run(work) {
+            Ok(v) => v,
+            Err(e) => panic!(e),
+        }
     }
 
     pub fn parse_json(json: String) -> Value {
@@ -163,6 +189,12 @@ mod tests {
     fn parse_json() {
         let json = NLP100::parse_json(String::from("{ \"hello\": 10 }"));
         assert_eq!(json["hello"], 10);
+    }
+
+    #[test]
+    fn get() {
+        let html = NLP100::get(String::from("https://katsyoshi.org/nlp100.json"));
+        assert_eq!(html, "");
     }
 
     fn setup() -> NLP100 {
