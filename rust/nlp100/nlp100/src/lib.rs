@@ -1,8 +1,10 @@
 extern crate libflate;
 extern crate regex;
+extern crate serde_json;
 
 use libflate::gzip::Decoder;
 use regex::Regex;
+use serde_json::Value;
 use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
@@ -68,6 +70,13 @@ impl NLP100 {
 
     pub fn count(path: String) -> usize {
         BufReader::new(NLP100::open(path)).lines().count()
+    }
+
+    pub fn parse_json(json: String) -> Value {
+        match serde_json::from_str(&json) {
+            Ok(v) => v,
+            Err(e) => panic!(e),
+        }
     }
 }
 
@@ -148,6 +157,12 @@ mod tests {
         let path = String::from("jawiki-country.json.gz");
         let json = NLP100::read_gzip(path);
         assert_eq!(55586, json[0].len());
+    }
+
+    #[test]
+    fn parse_json() {
+        let json = NLP100::parse_json(String::from("{ \"hello\": 10 }"));
+        assert_eq!(json["hello"], 10);
     }
 
     fn setup() -> NLP100 {
