@@ -1,10 +1,7 @@
-use std::collections::HashMap;
-use std::env;
-
 extern crate futures;
 extern crate hyper;
 extern crate hyper_tls;
-extern crate nlp100;
+extern crate libflate;
 extern crate regex;
 extern crate serde_json;
 extern crate tokio_core;
@@ -12,9 +9,13 @@ extern crate tokio_core;
 use futures::{Future, Stream};
 use hyper::Client;
 use hyper_tls::HttpsConnector;
-use nlp100::NLP100;
-use serde_json::Value;
+use libflate::gzip::Decoder;
 use regex::Regex;
+use serde_json::Value;
+use std::collections::HashMap;
+use std::env;
+use std::fs::File;
+use std::io::Read;
 use tokio_core::reactor::Core;
 
 fn get_image(query: String) -> String {
@@ -38,11 +39,18 @@ fn get_image(query: String) -> String {
     core.run(work).unwrap()
 }
 
+fn read_gzip(path: String) -> Vec<String> {
+    let mut file = File::open(path).unwrap();
+    let mut string = String::new();
+    Decoder::new(&mut file).unwrap().read_to_string(&mut string).unwrap();
+    string.split("\n").filter(|m| m.ne(&"")).map(|m| m.to_string()).collect::<Vec<String>>()
+}
+
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let path = &args[0].to_string();
     let keywords = &args[1..];
-    let lines = NLP100::read_gzip(path.to_string());
+    let lines = read_gzip(path.to_string());
     let re = Regex::new(r"(?ms)(?:^\{\{基礎情報.*?$)(?P<dict>.+?)(?:^\}\}$)").unwrap();
     let dic = Regex::new(r"(?:^\|)(?P<key>.+?)\s*=\s*(?P<val>.+)").unwrap();
     let key = Regex::new(r"[^\^\|](?P<val>.+)").unwrap();

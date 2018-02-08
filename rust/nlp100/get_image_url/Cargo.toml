@@ -7,7 +7,7 @@ authors = ["MATSUMOTO, Katsuyoshi <github@katsyoshi.org>"]
 futures = "*"
 hyper = "*"
 hyper-tls = "*"
-nlp100 = { path = "../nlp100" }
+libflate = "*"
 regex = "*"
 serde_json = "*"
 tokio-core = "*"
