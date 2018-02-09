@@ -52,10 +52,11 @@ fn main() {
     let keywords = &args[1..];
     let lines = read_gzip(path.to_string());
     let re = Regex::new(r"(?ms)(?:^\{\{基礎情報.*?$)(?P<dict>.+?)(?:^\}\}$)").unwrap();
-    let dic = Regex::new(r"(?:^\|)(?P<key>.+?)\s*=\s*(?P<val>.+)").unwrap();
-    let key = Regex::new(r"[^\^\|](?P<val>.+)").unwrap();
+    let bar_hat = Regex::new(r"(?ms)(?:^\|)").unwrap();
+    let dict = Regex::new(r"(?P<key>.+?)\s*=\s*(?P<val>.+)").unwrap();
+    let media = Regex::new(r"\[\[(File|ファイル):(?P<filename>.+?)(?:\|.*)*(?:\|.*)*\]\]").unwrap();
     let strong = Regex::new(r"'{2,5}").unwrap();
-    let link = Regex::new(r"(?:\[{1,2})|(?:\]{1,2})").unwrap();
+    let link = Regex::new(r"(?:\[{1,2})(?P<link>.+?)(?:\|.+)?(?:\]{1,2})").unwrap();
     let lang = Regex::new(r"(?:\{\{lang\|.+?\|)(?P<lang>.+?)(?:\}\})").unwrap();
     let markup = Regex::new(r"</*.+?>").unwrap();
 
@@ -73,43 +74,36 @@ fn main() {
             None => { continue; },
         };
 
-        let mut results: HashMap<String, String> = HashMap::new();
         if keywords.contains(&title) {
-            let c = re.captures(&text).unwrap();
-            let mut prev_key = String::new();
-            for line in c["dict"].split("\n") {
-                match dic.captures(line) {
-                    Some(caps) => {
-                        prev_key = caps["key"].to_string();
-                        results.insert(prev_key.clone(), caps["val"].to_string());
-                    },
-                    None => {
-                        match key.captures(line) {
-                            Some(caps) => {
-                                let pk = prev_key.clone();
-                                match results.get_mut(&pk) {
-                                    Some(v) => {
-                                        *v = vec![v.to_string(), caps["val"].to_string()].join("");
-                                        ()
-                                    },
-                                    None => { continue; },
-                                };
-                            },
-                            None => { continue; },
-                        }
-                    },
-                }
+            let mut results: HashMap<String, String> = HashMap::new();
+            let re: String = match re.captures(&text) {
+                Some(caps) => caps["dict"].to_string(),
+                None => {
+                    println!("cannot capture dict!!");
+                    continue;
+                },
+            };
+            for line in bar_hat.split(&re).filter(|f| f.ne(&"")).map(|m| m.to_string()) {
+                let line = line.replace("\n", "");
+                let dict = match dict.captures(&line) {
+                    Some(x) => x,
+                    None => {continue;},
+                };
+
+                let val = dict["val"].to_string();
+                let key = dict["key"].to_string();
+                let file: String = media.replace_all(&val, "$filename").trim().to_string();
+                let strong: String = strong.replace_all(&file, "").trim().to_string();
+                let link: String = link.replace_all(&strong, "$link").trim().to_string();
+                let markup: String = markup.replace_all(&link, "").trim().to_string();
+                let val: String = match key.as_ref() {
+                    "国旗画像" => get_image(markup.to_string()),
+                    _ => lang.replace_all(&markup, "$lang").trim().to_string(),
+                };
+                results.insert(key, val);
             }
             for (k, v) in results {
-                let strong: String = strong.replace_all(&v, " ").trim().to_string();
-                let link: String = link.replace_all(&strong, " ").trim().to_string();
-                let markup: String = markup.replace_all(&link, " ").trim().to_string();
-                let val: String = if k == "国旗画像" {
-                    get_image(v.to_string())
-                } else {
-                    lang.replace_all(&markup, " $lang").trim().to_string()
-                };
-                println!("{}: {}", k, val);
+                println!("{}: {}", k, v);
             }
         }
     }
