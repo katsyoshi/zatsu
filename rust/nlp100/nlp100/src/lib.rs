@@ -53,7 +53,7 @@ impl NLP100 {
         self.words.iter().map(|v| v.len() as u32).collect()
     }
 
-    pub fn chars_first_to(word: String, stop: usize) -> String{
+    pub fn chars_first_to(word: String, stop: usize) -> String {
         (word.chars().map(|c| c.to_string()).collect::<Vec<String>>()[0..stop]).join("")
     }
 
