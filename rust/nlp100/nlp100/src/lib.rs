@@ -62,7 +62,7 @@ impl NLP100 {
     }
 
     fn open(path: String) -> File {
-        File::open(path).unwrap()
+        match File::open(path) { Ok(file) => file, Err(e) => { panic!(e); } }
     }
 
     pub fn read_gzip(path: String) -> Vec<String> {
