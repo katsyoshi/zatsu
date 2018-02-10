@@ -68,7 +68,7 @@ impl NLP100 {
     pub fn read_gzip(path: String) -> Vec<String> {
         let mut file = NLP100::open(path);
         let mut string = String::new();
-        Decoder::new(&mut file).unwrap().read_to_string(&mut string).unwrap();
+        Decoder::new(&mut file).expect("cannot open gz file!").read_to_string(&mut string).expect("cannot read string in this gz file!");
         string.split("\n").map(|m| m.to_string()).collect()
     }
 
