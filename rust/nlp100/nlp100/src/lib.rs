@@ -74,7 +74,7 @@ impl NLP100 {
     }
 
     pub fn read(path: String) -> Vec<String> {
-        BufReader::new(NLP100::open(path)).lines().map(|m| m.unwrap().to_string()).collect()
+        BufReader::new(NLP100::open(path)).lines().map(|m| m.expect("None!").to_string()).collect()
     }
 
     pub fn count(path: String) -> usize {
