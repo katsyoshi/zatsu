@@ -40,9 +40,10 @@ impl NLP100 {
         let mut val: Vec<String> = Vec::new();
         let mut i = 0;
         let (v, j) = if t { (self.words, " ") } else { (self.chars, "") };
+        let len = v.len();
         loop {
             let w = i + size as usize;
-            if w > v.len() { break; }
+            if w > len { break; }
             val.push(v[i..w].join(j));
             i += 1;
         }
