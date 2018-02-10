@@ -94,18 +94,17 @@ impl NLP100 {
 
         match core.run(work) {
             Ok(v) => v,
-            Err(e) => panic!(e),
+            Err(e) => { panic!(e); },
         }
     }
 
     pub fn parse_json(json: String) -> Value {
         match serde_json::from_str(&json) {
             Ok(v) => v,
-            Err(e) => panic!(e),
+            Err(e) => { panic!(e); },
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {
