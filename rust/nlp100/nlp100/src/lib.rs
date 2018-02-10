@@ -25,8 +25,8 @@ pub struct NLP100 {
 
 impl NLP100 {
     pub fn new(script: &str) -> NLP100 {
-        let chars = script.chars().map(|m| m.to_string()).collect::<Vec<String>>();
-        let words = Regex::new(r"\W+").unwrap().split(script).map(|m| m.to_string()).collect::<Vec<String>>();
+        let chars: Vec<String> = script.chars().map(|m| m.to_string()).collect();
+        let words: Vec<String> = Regex::new(r"\W+").unwrap().split(script).map(|m| m.to_string()).collect();
         let origin: String = script.to_string();
 
         NLP100 {
