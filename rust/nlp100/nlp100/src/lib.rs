@@ -58,7 +58,7 @@ impl NLP100 {
     }
 
     pub fn words_first_to(self, stop: usize) -> Vec<String> {
-        self.words.iter().map(|word| NLP100::chars_first_to(word.to_string(), stop)).collect::<Vec<String>>()
+        self.words.iter().map(|word| NLP100::chars_first_to(word.to_string(), stop)).collect()
     }
 
     fn open(path: String) -> File {
@@ -69,11 +69,11 @@ impl NLP100 {
         let mut file = NLP100::open(path);
         let mut string = String::new();
         Decoder::new(&mut file).unwrap().read_to_string(&mut string).unwrap();
-        string.split("\n").map(|m| m.to_string()).collect::<Vec<String>>()
+        string.split("\n").map(|m| m.to_string()).collect()
     }
 
     pub fn read(path: String) -> Vec<String> {
-        BufReader::new(NLP100::open(path)).lines().map(|m| m.unwrap().to_string()).collect::<Vec<String>>()
+        BufReader::new(NLP100::open(path)).lines().map(|m| m.unwrap().to_string()).collect()
     }
 
     pub fn count(path: String) -> usize {
