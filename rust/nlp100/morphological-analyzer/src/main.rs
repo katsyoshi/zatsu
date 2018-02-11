@@ -24,21 +24,35 @@ fn verb(nodes: Vec<HashMap<String, String>>) {
     }
 }
 
+fn noun(nodes: Vec<HashMap<String, String>>) -> Vec<HashMap<String, String>> {
+    nodes.iter().filter(|node| node["pos"] == "名詞").map(|hm| hm.clone()).collect()
+}
+
+fn sa_noun(nodes: Vec<HashMap<String, String>>) -> Vec<HashMap<String, String>>{
+    noun(nodes).iter().filter(|node| node["pos1"] == "サ変接続").map(|hm| hm.clone()).collect()
+}
+
 fn main() {
     let url = "http://www.cl.ecei.tohoku.ac.jp/nlp100/data/neko.txt".to_string();
-    let neco = NLP100::get(url);
-    let mut tagger: Tagger = mecab::Tagger::new("");
-    let nodes: Node = tagger.parse_to_node(neco);
-    let mut mecab: Vec<HashMap<String, String>> = Vec::new();
+    let neco: Vec<String> = NLP100::get(url).split("\n").filter(|f| f.ne(&"")).map(|m| m.to_string()).collect();
 
-    for node in nodes.iter_next() {
-        match node.stat as i32 {
-            mecab::MECAB_BOS_NODE => (),
-            mecab::MECAB_EOS_NODE => (),
-            _ => {
-                mecab.push(feature(node));
+    for line in neco {
+        let mut tagger: Tagger = mecab::Tagger::new("");
+        let mut mecab: Vec<HashMap<String, String>> = Vec::new();
+        let nodes: Node = tagger.parse_to_node(line);
+
+        for node in nodes.iter_next() {
+            match node.stat as i32 {
+                mecab::MECAB_BOS_NODE => (),
+                mecab::MECAB_EOS_NODE => (),
+                _ => {
+                    mecab.push(feature(node));
+                }
             }
         }
+
+        for noun in sa_noun(mecab) {
+            println!("{}: {}", noun["surface"], noun["pos"]);
+        }
     }
-    verb(mecab);
 }
