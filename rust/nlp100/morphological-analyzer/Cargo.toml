@@ -1,0 +1,8 @@
+[package]
+name = "morphological-analyzer"
+version = "0.1.0"
+authors = ["MATSUMOTO, Katsuyoshi <github@katsyoshi.org>"]
+
+[dependencies]
+mecab = "*"
+nlp100 = { path = "../nlp100" }
