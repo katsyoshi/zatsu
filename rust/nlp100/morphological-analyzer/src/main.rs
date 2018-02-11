@@ -18,6 +18,12 @@ fn feature(node: Node) -> HashMap<String, String> {
     h
 }
 
+fn verb(nodes: Vec<HashMap<String, String>>) {
+    for verb in nodes.iter().filter(|m| m["pos"] == "動詞") {
+        println!("{}: {}", verb["surface"], verb["base"]);
+    }
+}
+
 fn main() {
     let url = "http://www.cl.ecei.tohoku.ac.jp/nlp100/data/neko.txt".to_string();
     let neco = NLP100::get(url);
@@ -34,8 +40,5 @@ fn main() {
             }
         }
     }
-
-    for verb in mecab.iter().filter(|m| m["pos"] == "動詞") {
-        println!("{}: {}", verb["surface"], verb["base"]);
-    }
+    verb(mecab);
 }
