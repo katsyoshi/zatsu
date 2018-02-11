@@ -34,5 +34,8 @@ fn main() {
             }
         }
     }
-    mecab.iter().filter(|m| m["pos"] == "動詞");
+
+    for verb in mecab.iter().filter(|m| m["pos"] == "動詞") {
+        println!("{}: {}", verb["surface"], verb["base"]);
+    }
 }
