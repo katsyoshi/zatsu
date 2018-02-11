@@ -9,11 +9,12 @@ use std::collections::HashMap;
 fn feature(node: Node) -> HashMap<String, String> {
     let mut h: HashMap<String, String> = HashMap::new();
     let surface: String = (&(node.surface)[..node.length as usize]).to_string();
-    let feature: Vec<String> = node.feature.split(",").map(|m| m.to_string()).collect();
     h.insert("surface".to_string(), surface);
-    h.insert("base".to_string(), feature[0].to_string());
-    h.insert("pos".to_string(), feature[1].to_string());
-    h.insert("pos1".to_string(), feature[2].to_string());
+    let keys: Vec<String> = vec!["pos", "pos1", "pos2", "pos3", "a", "b", "base", "read", "speech"].iter().map(|m| m.to_string()).collect();
+    let values: Vec<String> = node.feature.split(",").map(|m| m.to_string()).collect();
+    for (a, b) in keys.iter().zip(values.iter()) {
+        h.insert(a.to_string(), b.to_string());
+    }
     h
 }
 
@@ -33,4 +34,5 @@ fn main() {
             }
         }
     }
+    mecab.iter().filter(|m| m["pos"] == "動詞");
 }
