@@ -18,10 +18,8 @@ fn feature(node: Node) -> HashMap<String, String> {
     h
 }
 
-fn verb(nodes: Vec<HashMap<String, String>>) {
-    for verb in nodes.iter().filter(|m| m["pos"] == "動詞") {
-        println!("{}: {}", verb["surface"], verb["base"]);
-    }
+fn verb(nodes: Vec<HashMap<String, String>>) -> Vec<HashMap<String, String>> {
+    nodes.iter().filter(|m| m["pos"] == "動詞").map(|hm| hm.clone()).collect()
 }
 
 fn noun(nodes: Vec<HashMap<String, String>>) -> Vec<HashMap<String, String>> {
