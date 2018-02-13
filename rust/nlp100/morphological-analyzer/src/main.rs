@@ -6,7 +6,7 @@ use mecab::Tagger;
 use nlp100::NLP100;
 use std::collections::HashMap;
 
-fn feature(node: Node) -> HashMap<String, String> {
+fn feature(node: &Node) -> HashMap<String, String> {
     let mut h: HashMap<String, String> = HashMap::new();
     let surface: String = (&(node.surface)[..node.length as usize]).to_string();
     h.insert("surface".to_string(), surface);
@@ -44,13 +44,16 @@ fn main() {
                 mecab::MECAB_BOS_NODE => (),
                 mecab::MECAB_EOS_NODE => (),
                 _ => {
-                    mecab.push(feature(node));
+                    let m = feature(&node);
+                    if m["surface"] == "の" && m["pos"] == "助詞" && m["pos1"] == "連体化" {
+                        let prev = feature(&node.prev().unwrap());
+                        let next = feature(&node.next().unwrap());
+
+                        let noun_phrase = format!("{}{}{}", &prev["surface"], &m["surface"], &next["surface"]);
+                        println!("{}", noun_phrase);
+                    }
                 }
             }
-        }
-
-        for noun in sa_noun(mecab) {
-            println!("{}: {}", noun["surface"], noun["pos"]);
         }
     }
 }
