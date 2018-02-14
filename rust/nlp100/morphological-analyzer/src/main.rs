@@ -7,6 +7,9 @@ use nlp100::NLP100;
 use std::collections::HashMap;
 
 const ANALYZED_MECAB_KEYS: [&str; 9] = ["pos", "pos1", "pos2", "pos3", "a", "b", "base", "read", "speech"];
+const VERB: &str = "動詞";
+const NOUN: &str = "名詞";
+const PARTICLE: &str = "助詞";
 
 fn feature(node: &Node) -> HashMap<String, String> {
     let mut h: HashMap<String, String> = HashMap::new();
@@ -20,11 +23,11 @@ fn feature(node: &Node) -> HashMap<String, String> {
 }
 
 fn verb(nodes: Vec<HashMap<String, String>>) -> Vec<HashMap<String, String>> {
-    nodes.iter().filter(|m| m["pos"] == "動詞").map(|hm| hm.clone()).collect()
+    nodes.iter().filter(|m| m["pos"] == VERB).map(|hm| hm.clone()).collect()
 }
 
 fn noun(nodes: Vec<HashMap<String, String>>) -> Vec<HashMap<String, String>> {
-    nodes.iter().filter(|node| node["pos"] == "名詞").map(|hm| hm.clone()).collect()
+    nodes.iter().filter(|node| node["pos"] == NOUN).map(|hm| hm.clone()).collect()
 }
 
 fn sa_noun(nodes: Vec<HashMap<String, String>>) -> Vec<HashMap<String, String>>{
@@ -46,11 +49,11 @@ fn main() {
                 mecab::MECAB_EOS_NODE => (),
                 _ => {
                     let m = feature(&node);
-                    if m["surface"] == "の" && m["pos"] == "助詞" && m["pos1"] == "連体化" {
+                    if m["surface"] == "の" && m["pos"] == PARTICLE && m["pos1"] == "連体化" {
                         let prev = feature(&node.prev().unwrap());
                         let next = feature(&node.next().unwrap());
 
-                        if prev["pos"] == "名詞" && next["pos"] == "名詞" {
+                        if prev["pos"] == NOUN && next["pos"] == NOUN {
                             println!("{}{}{}", &prev["surface"], &m["surface"], &next["surface"]);
                         }
                     }
