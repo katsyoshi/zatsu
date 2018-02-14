@@ -6,13 +6,14 @@ use mecab::Tagger;
 use nlp100::NLP100;
 use std::collections::HashMap;
 
+const ANALYZED_MECAB_KEYS: [&str; 9] = ["pos", "pos1", "pos2", "pos3", "a", "b", "base", "read", "speech"];
+
 fn feature(node: &Node) -> HashMap<String, String> {
     let mut h: HashMap<String, String> = HashMap::new();
     let surface: String = (&(node.surface)[..node.length as usize]).to_string();
     h.insert("surface".to_string(), surface);
-    let keys: Vec<String> = vec!["pos", "pos1", "pos2", "pos3", "a", "b", "base", "read", "speech"].iter().map(|m| m.to_string()).collect();
     let values: Vec<String> = node.feature.split(",").map(|m| m.to_string()).collect();
-    for (a, b) in keys.iter().zip(values.iter()) {
+    for (a, b) in ANALYZED_MECAB_KEYS.iter().zip(values.iter()) {
         h.insert(a.to_string(), b.to_string());
     }
     h
