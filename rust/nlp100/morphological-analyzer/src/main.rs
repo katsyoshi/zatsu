@@ -50,8 +50,9 @@ fn main() {
                         let prev = feature(&node.prev().unwrap());
                         let next = feature(&node.next().unwrap());
 
-                        let noun_phrase = format!("{}{}{}", &prev["surface"], &m["surface"], &next["surface"]);
-                        println!("{}", noun_phrase);
+                        if prev["pos"] == "名詞" && next["pos"] == "名詞" {
+                            println!("{}{}{}", &prev["surface"], &m["surface"], &next["surface"]);
+                        }
                     }
                 }
             }
