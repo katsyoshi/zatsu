@@ -22,6 +22,18 @@ fn feature(node: &Node) -> HashMap<String, String> {
     h
 }
 
+fn between_noun(node: &Node) -> Option<String> {
+    let mecab = feature(node);
+    if mecab["surface"] == "の" && mecab["pos"] == PARTICLE && mecab["pos1"] == "連体化" {
+        let prev = feature(&node.prev().unwrap());
+        let next = feature(&node.next().unwrap());
+
+        Some(format!("{}{}{}", &prev["surface"], &mecab["surface"], &next["surface"]))
+    } else {
+        None
+    }
+}
+
 fn verb(nodes: Vec<HashMap<String, String>>) -> Vec<HashMap<String, String>> {
     nodes.iter().filter(|m| m["pos"] == VERB).map(|hm| hm.clone()).collect()
 }
@@ -48,14 +60,9 @@ fn main() {
                 mecab::MECAB_BOS_NODE => (),
                 mecab::MECAB_EOS_NODE => (),
                 _ => {
-                    let m = feature(&node);
-                    if m["surface"] == "の" && m["pos"] == PARTICLE && m["pos1"] == "連体化" {
-                        let prev = feature(&node.prev().unwrap());
-                        let next = feature(&node.next().unwrap());
-
-                        if prev["pos"] == NOUN && next["pos"] == NOUN {
-                            println!("{}{}{}", &prev["surface"], &m["surface"], &next["surface"]);
-                        }
+                    match between_noun(&node) {
+                        Some(x) => { println!("{}", x); }
+                        None => (),
                     }
                 }
             }
