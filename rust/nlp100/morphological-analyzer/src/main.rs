@@ -52,7 +52,7 @@ fn main() {
 
     for line in neco {
         let mut tagger: Tagger = mecab::Tagger::new("");
-        let mut mecab: Vec<HashMap<String, String>> = Vec::new();
+        let mut mecabu: String = String::from("");
         let nodes: Node = tagger.parse_to_node(line);
 
         for node in nodes.iter_next() {
@@ -60,9 +60,20 @@ fn main() {
                 mecab::MECAB_BOS_NODE => (),
                 mecab::MECAB_EOS_NODE => (),
                 _ => {
-                    match between_noun(&node) {
-                        Some(x) => { println!("{}", x); }
-                        None => (),
+                    let m = feature(&node);
+                    match m["pos"].as_ref() {
+                        NOUN => {
+                            mecabu = mecabu + &m["surface"];
+                        },
+                        _ => {
+                            match mecabu.as_ref() {
+                                "" => (),
+                                _ => {
+                                    println!("{}", mecabu);
+                                    mecabu = String::from("");
+                                }
+                            }
+                        }
                     }
                 }
             }
