@@ -1,6 +1,8 @@
+extern crate gnuplot;
 extern crate mecab;
 extern crate nlp100;
 
+use gnuplot::*;
 use mecab::Node;
 use mecab::Tagger;
 use nlp100::NLP100;
@@ -20,6 +22,15 @@ fn feature(node: &Node) -> HashMap<String, String> {
         h.insert(a.to_string(), b.to_string());
     }
     h
+}
+
+fn word_histgram(nodes: Vec<HashMap<String, String>>) -> HashMap<String, u64> {
+    let mut results: HashMap<String, u64> = HashMap::new();
+    for node in nodes {
+        let base = &node["base"];
+        *results.entry(base.to_string()).or_insert(0) += 1;
+    }
+    results
 }
 
 fn between_noun(node: &Node) -> Option<String> {
@@ -49,10 +60,10 @@ fn sa_noun(nodes: Vec<HashMap<String, String>>) -> Vec<HashMap<String, String>>{
 fn main() {
     let url = "http://www.cl.ecei.tohoku.ac.jp/nlp100/data/neko.txt".to_string();
     let neco: Vec<String> = NLP100::get(url).split("\n").filter(|f| f.ne(&"")).map(|m| m.to_string()).collect();
+    let mut mecabu: Vec<HashMap<String, String>> = Vec::new();
 
     for line in neco {
         let mut tagger: Tagger = mecab::Tagger::new("");
-        let mut mecabu: String = String::from("");
         let nodes: Node = tagger.parse_to_node(line);
 
         for node in nodes.iter_next() {
@@ -60,23 +71,26 @@ fn main() {
                 mecab::MECAB_BOS_NODE => (),
                 mecab::MECAB_EOS_NODE => (),
                 _ => {
-                    let m = feature(&node);
-                    match m["pos"].as_ref() {
-                        NOUN => {
-                            mecabu = mecabu + &m["surface"];
-                        },
-                        _ => {
-                            match mecabu.as_ref() {
-                                "" => (),
-                                _ => {
-                                    println!("{}", mecabu);
-                                    mecabu = String::from("");
-                                }
-                            }
-                        }
-                    }
+                    mecabu.push(feature(&node));
                 }
             }
         }
     }
+    let word_histgram: HashMap<String, u64> = word_histgram(mecabu);
+    let mut word_count: Vec<(String, u64)> = word_histgram.iter().map(|(word, count)| (word.to_owned(), count.to_owned())).collect();
+    word_count.sort_by(|a, b| b.1.cmp(&a.1));
+    let mut fg = Figure::new();
+    let data: Vec<(String, u64)> = word_count.iter().take(10).map(|&(ref word, count)| (word.to_owned(), count.to_owned())).collect();
+    let y: Vec<u64> = data.iter().map(|m| m.1).collect();
+    let x = 0..data.len();
+    let labels = data.iter().enumerate().map(|(idx, &(ref word, _))| Major(idx, Fix(word.clone())));
+
+    let w = std::iter::repeat(0.5f32);
+
+    fg.axes2d().set_title("頻度の高い単語", &[])
+        .boxes_set_width(x, y, w, &[LineWidth(1.0), Color("gray"), BorderColor("black")])
+        .set_x_ticks_custom(labels, &[], &[Font("ipag.ttf", 12f64)]);
+    fg.set_terminal("encoding", "utf8");
+    fg.set_terminal("png", "word-histgram.png");
+    fg.show();
 }
