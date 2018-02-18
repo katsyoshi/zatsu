@@ -80,14 +80,16 @@ fn main() {
     let mut word_count: Vec<(String, u64)> = word_histgram.iter().map(|(word, count)| (word.to_owned(), count.to_owned())).collect();
     word_count.sort_by(|a, b| b.1.cmp(&a.1));
     let mut fg = Figure::new();
-    let data: Vec<(String, u64)> = word_count.iter().take(10).map(|&(ref word, count)| (word.to_owned(), count.to_owned())).collect();
+    let data: Vec<(String, u64)> = word_count.iter().take(40).map(|&(ref word, count)| (word.to_owned(), count.to_owned())).collect();
     let y: Vec<u64> = data.iter().map(|m| m.1).collect();
-    let x = 0..data.len();
-    let labels = data.iter().enumerate().map(|(idx, &(ref word, _))| Major(idx, Fix(word.clone())));
+    let x = 0..(data.len() - 1);
+    let labels = data.iter().enumerate().map(|(idx, &(ref word, _count))| Major(idx, Fix(word.clone())));
 
     let w = std::iter::repeat(0.5f32);
 
     fg.axes2d().set_title("頻度の高い単語", &[])
+        .set_x_label("Num", &[])
+        .set_y_label("Kinds", &[])
         .boxes_set_width(x, y, w, &[LineWidth(1.0), Color("gray"), BorderColor("black")])
         .set_x_ticks_custom(labels, &[], &[Font("ipag.ttf", 12f64)]);
     fg.set_terminal("encoding", "utf8");
