@@ -80,7 +80,7 @@ fn main() {
     let mut word_count: Vec<(String, u64)> = word_histgram.iter().map(|(word, count)| (word.to_owned(), count.to_owned())).collect();
     word_count.sort_by(|a, b| b.1.cmp(&a.1));
     let mut fg = Figure::new();
-    let data: Vec<(String, u64)> = word_count.iter().take(40).map(|&(ref word, count)| (word.to_owned(), count.to_owned())).collect();
+    let data: Vec<(String, u64)> = word_count.iter().map(|&(ref word, count)| (word.to_owned(), count.to_owned())).collect();
     let y: Vec<u64> = data.iter().map(|m| m.1).collect();
     let x = 0..(data.len() - 1);
     let labels = data.iter().enumerate().map(|(idx, &(ref word, _count))| Major(idx, Fix(word.clone())));
@@ -90,8 +90,9 @@ fn main() {
     fg.axes2d().set_title("頻度の高い単語", &[])
         .set_x_label("Num", &[])
         .set_y_label("Kinds", &[])
-        .boxes_set_width(x, y, w, &[LineWidth(1.0), Color("gray"), BorderColor("black")])
-        .set_x_ticks_custom(labels, &[], &[Font("ipag.ttf", 12f64)]);
+        .set_x_log(Some(10.0))
+        .set_y_log(Some(10.0))
+        .points(x, y, &[]);
     fg.set_terminal("encoding", "utf8");
     fg.set_terminal("png", "word-histgram.png");
     fg.show();
