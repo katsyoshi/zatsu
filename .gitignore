@@ -1,2 +1,7 @@
 target
-*.txt
+*.txt*
+*.gz
+*.png
+*.svg
+*.jpg
+*.jpeg
