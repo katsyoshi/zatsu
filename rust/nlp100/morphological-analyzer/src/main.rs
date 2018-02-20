@@ -9,9 +9,21 @@ use nlp100::NLP100;
 use std::collections::HashMap;
 
 const ANALYZED_MECAB_KEYS: [&str; 9] = ["pos", "pos1", "pos2", "pos3", "a", "b", "base", "read", "speech"];
-const VERB: &str = "動詞";
-const NOUN: &str = "名詞";
-const PARTICLE: &str = "助詞";
+enum PartOfSpeech {
+    VERB,
+    NOUN,
+    PARTICLE,
+}
+
+use PartOfSpeech::*;
+
+fn inspect(val: PartOfSpeech) -> String {
+    match val {
+        VERB => "動詞",
+        NOUN => "名詞",
+        PARTICLE => "助詞",
+    }.to_string()
+}
 
 fn feature(node: &Node) -> HashMap<String, String> {
     let mut h: HashMap<String, String> = HashMap::new();
@@ -35,7 +47,7 @@ fn word_histgram(nodes: Vec<HashMap<String, String>>) -> HashMap<String, u64> {
 
 fn between_noun(node: &Node) -> Option<String> {
     let mecab = feature(node);
-    if mecab["surface"] == "の" && mecab["pos"] == PARTICLE && mecab["pos1"] == "連体化" {
+    if mecab["surface"] == "の" && mecab["pos"] == inspect(PARTICLE) && mecab["pos1"] == "連体化" {
         let prev = feature(&node.prev().unwrap());
         let next = feature(&node.next().unwrap());
 
@@ -46,11 +58,11 @@ fn between_noun(node: &Node) -> Option<String> {
 }
 
 fn verb(nodes: Vec<HashMap<String, String>>) -> Vec<HashMap<String, String>> {
-    nodes.iter().filter(|m| m["pos"] == VERB).map(|hm| hm.clone()).collect()
+    nodes.iter().filter(|m| m["pos"] == inspect(VERB)).map(|hm| hm.clone()).collect()
 }
 
 fn noun(nodes: Vec<HashMap<String, String>>) -> Vec<HashMap<String, String>> {
-    nodes.iter().filter(|node| node["pos"] == NOUN).map(|hm| hm.clone()).collect()
+    nodes.iter().filter(|node| node["pos"] == inspect(NOUN)).map(|hm| hm.clone()).collect()
 }
 
 fn sa_noun(nodes: Vec<HashMap<String, String>>) -> Vec<HashMap<String, String>>{
