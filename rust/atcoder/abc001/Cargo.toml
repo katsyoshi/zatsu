@@ -1,0 +1,7 @@
+[package]
+name = "abc001"
+version = "0.1.0"
+authors = ["MATSUMOTO, Katsuyoshi <github@katsyoshi.org>"]
+edition = "2018"
+
+[dependencies]
